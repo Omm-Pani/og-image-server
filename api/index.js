@@ -1,5 +1,9 @@
 const express = require("express");
-const { chromium } = require("playwright");
+const { chromium } = require("@sparticuz/chromium");
+const playwright = require("playwright-core");
+
+const executablePath = await chromium.executablePath();
+
 const path = require("path");
 const cors = require("cors");
 const multer = require("multer");
@@ -34,7 +38,12 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
   const outputFilePath = `../public/images/og-${Date.now()}.png`;
   try {
-    const browser = await chromium.launch();
+    const browser = await playwright.chromium.launch({
+      executablePath,
+      headless: true, // use this instead of using chromium.headless because it uses the new `headless: "new"` which will throw because playwright expects `headless: boolean`
+      args: chromium.args,
+    });
+
     const page = await browser.newPage();
 
     await page.setContent(`
