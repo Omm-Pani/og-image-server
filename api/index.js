@@ -1,5 +1,5 @@
 const express = require("express");
-const { chromium } = require("@sparticuz/chromium");
+const chromium = require("@sparticuz/chromium");
 const playwright = require("playwright-core");
 
 const path = require("path");
@@ -35,13 +35,12 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
   const outputFilePath = `../public/images/og-${Date.now()}.png`;
-  const executablePath = await chromium.executablePath();
 
   try {
     const browser = await playwright.chromium.launch({
-      executablePath,
-      headless: true, // use this instead of using chromium.headless because it uses the new `headless: "new"` which will throw because playwright expects `headless: boolean`
       args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true, // use this instead of using chromium.headless because it uses the new `headless: "new"` which will throw because playwright expects `headless: boolean`
     });
 
     const page = await browser.newPage();
@@ -206,8 +205,16 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   </html>
   `);
 
-    await page.screenshot({ path: outputFilePath });
-    await browser.close();
+    try {
+      console.log("Starting screenshot process");
+      await page.screenshot({ path: outputFilePath });
+      console.log("Screenshot taken successfully:", outputFilePath);
+    } catch (screenshotError) {
+      console.error("Error taking screenshot:", screenshotError);
+      throw new Error("Screenshot failed");
+    } finally {
+      await browser.close();
+    }
 
     res.json({
       imageUrl: `http://localhost:${PORT}/images/${path.basename(
