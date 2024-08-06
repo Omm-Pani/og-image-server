@@ -2,8 +2,6 @@ const express = require("express");
 const { chromium } = require("@sparticuz/chromium");
 const playwright = require("playwright-core");
 
-const executablePath = await chromium.executablePath();
-
 const path = require("path");
 const cors = require("cors");
 const multer = require("multer");
@@ -37,6 +35,8 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
   const outputFilePath = `../public/images/og-${Date.now()}.png`;
+  const executablePath = await chromium.executablePath();
+
   try {
     const browser = await playwright.chromium.launch({
       executablePath,
