@@ -224,7 +224,7 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
     }
 
     res.json({
-      imageUrl: `http://localhost:${PORT}/images/${path.basename(
+      imageUrl: `https://og-image-server-git-main-ommpanis-projects.vercel.app/images/${path.basename(
         outputFilePath
       )}`,
     });
