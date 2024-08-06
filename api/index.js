@@ -143,6 +143,9 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
       />
+           ${imagePath && `<meta property="og:image" content={ogImageUrl}/>`}
+            <meta property="og:title" content=${title} />
+            <meta property="og:description" content=${content} />
     </head>
     <body>
       <div class="container-wrap">
