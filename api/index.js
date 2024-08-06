@@ -205,6 +205,7 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
     )}`,
   });
 });
+app.get("/", (req, res) => res.send("welcome to server"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
