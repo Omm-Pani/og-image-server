@@ -31,13 +31,14 @@ app.use(
   })
 );
 app.use(express.json());
-app.use("/images", express.static(IMAGES_DIR));
+app.use("/images", express.static("/tmp"));
 // path.join(__dirname, "../public/images")
 app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
   // const outputFilePath = `./public/images/og-${Date.now()}.png`;
-  const outputFilePath = path.join(IMAGES_DIR, `og-${Date.now()}.png`);
+  // const outputFilePath = path.join(IMAGES_DIR, `og-${Date.now()}.png`);
+  const outputFilePath = path.join("/tmp", `og-${Date.now()}.png`);
 
   try {
     const browser = await playwright.chromium.launch({
