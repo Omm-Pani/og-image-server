@@ -33,11 +33,11 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
   const outputFilePath = `../public/images/og-${Date.now()}.png`;
+  try {
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
 
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-
-  await page.setContent(`
+    await page.setContent(`
   <!DOCTYPE html>
   <html>
     <head>
@@ -197,14 +197,20 @@ app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   </html>
   `);
 
-  await page.screenshot({ path: outputFilePath });
-  await browser.close();
+    await page.screenshot({ path: outputFilePath });
+    await browser.close();
 
-  res.json({
-    imageUrl: `http://localhost:${PORT}/images/${path.basename(
-      outputFilePath
-    )}`,
-  });
+    res.json({
+      imageUrl: `http://localhost:${PORT}/images/${path.basename(
+        outputFilePath
+      )}`,
+    });
+  } catch (error) {
+    console.error("Error generating OG image:", error);
+    res
+      .status(500)
+      .json({ message: "Server Error during og-image-gen", error: error });
+  }
 });
 app.get("/", (req, res) => res.send("welcome to server"));
 
