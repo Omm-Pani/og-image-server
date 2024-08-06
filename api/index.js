@@ -26,7 +26,7 @@ const upload = multer({ storage });
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Frontend URL
+    origin: "https://og-image-generator-rouge.vercel.app/", // Frontend URL
     credentials: true, // Allow credentials (cookies) to be sent
   })
 );
