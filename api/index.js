@@ -10,6 +10,8 @@ const { log } = require("console");
 
 const app = express();
 const PORT = 3001;
+const PUBLIC_DIR = process.env.PUBLIC_DIR || "public";
+const IMAGES_DIR = path.join(__dirname, PUBLIC_DIR, "images");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -34,7 +36,7 @@ app.use("/images", express.static(path.join(__dirname, "../public/images")));
 app.post("/generate-og-image", upload.single("image"), async (req, res) => {
   const { title, content } = req.body;
   const imagePath = req.file ? `/images/${req.file.filename}` : null;
-  const outputFilePath = `../public/images/og-${Date.now()}.png`;
+  const outputFilePath = `./public/images/og-${Date.now()}.png`;
 
   try {
     const browser = await playwright.chromium.launch({
